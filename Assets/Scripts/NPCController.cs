@@ -4,7 +4,8 @@ public class NPCController : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] GameObject destination;
-    [SerializeField] Material color; // todo replace with a sprite and make the change to the player and door through code instead
+    SpriteRenderer NPCSR;
+    SpriteRenderer destinationColor;
 
     [Header("Config")]
     [SerializeField] float distanceToPlayer;    
@@ -14,7 +15,13 @@ public class NPCController : MonoBehaviour
     [Header("Bools")]
     bool hasBoarded;
     bool hasArrived;
-    
+
+    void Start()
+    {
+        NPCSR = GetComponent<SpriteRenderer>();
+        NPCSR.color = new Color(1, 0, 0, 1);
+    }
+
     void Update()
     {
         Boarding();
@@ -25,7 +32,7 @@ public class NPCController : MonoBehaviour
     {
         if (Vector3.Distance(transform.position, PlayerController.instance.transform.position) < distanceToPlayer && PlayerController.instance.HasLanded() && hasBoarded == false)
         {
-            destination.GetComponent<MeshRenderer>().material = color;
+            destination.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0, 1);
             transform.position = Vector3.MoveTowards(transform.position, PlayerController.instance.transform.position, moveSpeed * Time.deltaTime);
         }
 
@@ -48,7 +55,10 @@ public class NPCController : MonoBehaviour
         }
 
         if (transform.position == destination.transform.position && hasArrived)
+        {
+            destination.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
             Destroy(gameObject);
+        }
     }
 
     void OnTriggerEnter2D(Collider2D other)
