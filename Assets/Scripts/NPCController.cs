@@ -4,11 +4,11 @@ public class NPCController : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] GameObject destination;
-    SpriteRenderer NPCSR;
-    SpriteRenderer destinationColor;
+    [SerializeField] GameObject nextNPC;
+    SpriteRenderer npcSpriteRenderer;
 
     [Header("Config")]
-    [SerializeField] float distanceToPlayer;    
+    [SerializeField] float distanceToPlayer;
     [SerializeField] float moveSpeed;
     [SerializeField] float distanceToDestination;
 
@@ -18,8 +18,7 @@ public class NPCController : MonoBehaviour
 
     void Start()
     {
-        NPCSR = GetComponent<SpriteRenderer>();
-        NPCSR.color = new Color(1, 0, 0, 1);
+        npcSpriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     void Update()
@@ -32,7 +31,7 @@ public class NPCController : MonoBehaviour
     {
         if (Vector3.Distance(transform.position, PlayerController.instance.transform.position) < distanceToPlayer && PlayerController.instance.HasLanded() && hasBoarded == false)
         {
-            destination.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0, 1);
+            destination.GetComponent<SpriteRenderer>().color = npcSpriteRenderer.color;
             transform.position = Vector3.MoveTowards(transform.position, PlayerController.instance.transform.position, moveSpeed * Time.deltaTime);
         }
 
@@ -58,6 +57,11 @@ public class NPCController : MonoBehaviour
         {
             destination.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
             Destroy(gameObject);
+
+            if (nextNPC != null)
+                nextNPC.SetActive(true);
+            else
+                Debug.Log("You win!");
         }
     }
 

@@ -12,6 +12,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float dangerousSpeed;
     float currentSpeedX;
     float currentSpeedY;
+    float boundaryX = 9f;
+    float boundaryY = 5f;
 
     [Header("Bools")]
     bool hasLanded;
@@ -28,9 +30,28 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        ProcessInput();
+        PlayerBoundaries();
+        CheckSpeed();
+    }
+
+    void ProcessInput()
+    {
         rb.AddForce(transform.up * thrustForce * Input.GetAxis("Vertical"));
         if (!hasLanded)
             rb.AddForce(transform.right * moveSpeed * Input.GetAxis("Horizontal"));
+    }
+
+    void PlayerBoundaries()
+    {
+        Vector2 playerPos = new Vector2(transform.position.x, transform.position.y);
+        playerPos.x = Mathf.Clamp(transform.position.x, -boundaryX, boundaryX);
+        playerPos.y = Mathf.Clamp(transform.position.y, -boundaryY, boundaryY);
+        transform.position = playerPos;
+    }
+
+    void CheckSpeed()
+    {
         currentSpeedX = rb.velocity.x;
         currentSpeedY = rb.velocity.y;
     }
@@ -41,10 +62,10 @@ public class PlayerController : MonoBehaviour
             hasLanded = true;
 
         if (currentSpeedX < -dangerousSpeed || currentSpeedX > dangerousSpeed)
-            Debug.Log("Crash!");
+            Debug.Log("Camera Shake!");
 
         if (currentSpeedY < -dangerousSpeed || currentSpeedY > dangerousSpeed)
-            Debug.Log("Crash!");
+            Debug.Log("Camera Shake!");
     }
 
     void OnCollisionExit2D(Collision2D other)
