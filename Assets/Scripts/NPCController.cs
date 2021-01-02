@@ -50,7 +50,8 @@ public class NPCController : MonoBehaviour
         if (hasArrived)
         {
             transform.position = Vector3.MoveTowards(transform.position, destination.transform.position, moveSpeed * Time.deltaTime);
-            //todo bug: colliders are colliding together, which means the NPC does not move until player has flown away
+            // todo bug: there is a bug somewhere in this class that is causing issues with arrival.
+            // The NPC currently only moves towards the destination once the player is back in the air. If the player lands again, the NPC stops moving.
         }
 
         if (transform.position == destination.transform.position && hasArrived)
