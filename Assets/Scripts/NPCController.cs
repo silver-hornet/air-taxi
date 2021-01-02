@@ -57,11 +57,12 @@ public class NPCController : MonoBehaviour
         {
             destination.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
             Destroy(gameObject);
+            GameManager.instance.UpdateDeliveriesLeft();
 
             if (nextNPC != null)
                 nextNPC.SetActive(true);
             else
-                Debug.Log("You win!");
+                GameManager.instance.UpdateDeliveriesLeft();
         }
     }
 
@@ -69,5 +70,8 @@ public class NPCController : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player") && hasArrived == false)
             hasBoarded = true;
+
+        //if (hasArrived)
+        //    Physics2D.IgnoreCollision(PlayerController.instance.GetComponent<Collider2D>(), GetComponent<Collider2D>());
     }
 }

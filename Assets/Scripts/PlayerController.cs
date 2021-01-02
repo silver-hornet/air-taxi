@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,6 +19,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Bools")]
     bool hasLanded;
+    bool hasDied;
 
     void Awake()
     {
@@ -30,9 +33,12 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        ProcessInput();
-        PlayerBoundaries();
-        CheckSpeed();
+        if (!hasDied)
+        {
+            ProcessInput();
+            PlayerBoundaries();
+            CheckSpeed();
+        }
     }
 
     void ProcessInput()
@@ -44,10 +50,10 @@ public class PlayerController : MonoBehaviour
 
     void PlayerBoundaries()
     {
-        Vector2 playerPos = new Vector2(transform.position.x, transform.position.y);
-        playerPos.x = Mathf.Clamp(transform.position.x, -boundaryX, boundaryX);
-        playerPos.y = Mathf.Clamp(transform.position.y, -boundaryY, boundaryY);
-        transform.position = playerPos;
+            Vector2 playerPos = new Vector2(transform.position.x, transform.position.y);
+            playerPos.x = Mathf.Clamp(transform.position.x, -boundaryX, boundaryX);
+            playerPos.y = Mathf.Clamp(transform.position.y, -boundaryY, boundaryY);
+            transform.position = playerPos;
     }
 
     void CheckSpeed()
@@ -62,10 +68,26 @@ public class PlayerController : MonoBehaviour
             hasLanded = true;
 
         if (currentSpeedX < -dangerousSpeed || currentSpeedX > dangerousSpeed)
-            Debug.Log("Camera Shake!");
+            HasDied();
 
         if (currentSpeedY < -dangerousSpeed || currentSpeedY > dangerousSpeed)
-            Debug.Log("Camera Shake!");
+            HasDied();
+    }
+
+    void HasDied()
+    {
+        CameraShake.instance.Shake();
+        hasDied = true;
+        rb.AddForce(new Vector2(0, 7), ForceMode2D.Impulse);
+        rb.SetRotation(45f);
+        GetComponent<Collider2D>().enabled = false;
+        StartCoroutine(ResetGameCo());
+    }
+
+    IEnumerator ResetGameCo()
+    {
+        yield return new WaitForSeconds(2f);
+        SceneManager.LoadScene(0);
     }
 
     void OnCollisionExit2D(Collision2D other)
